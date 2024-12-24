@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { OrderItem } from '../types';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
@@ -21,33 +20,11 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   tableNumber,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'mercadopago'>('cash');
-  const [showWallet, setShowWallet] = useState(false); // Controla cuándo mostrar la Wallet
-  const [preferenceId, setPreferenceId] = useState<string | null>(null); // Guarda el ID de preferencia
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Inicializar Mercado Pago SDK
-  React.useEffect(() => {
-    initMercadoPago('APP_USR-6c0546fc-95a1-46d9-9403-b110ce65de09', { locale: 'es-AR' }); // Reemplaza con tu clave pública
-  }, []);
-
   const handlePlaceOrder = async () => {
-    if (paymentMethod === 'mercadopago') {
-      try {
-        const response = await fetch('https://cafe-pedidos-back.onrender.com/api/create_preference', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items }),
-        });
-        const data = await response.json();
-        setPreferenceId(data.preferenceId);
-        setShowWallet(true);
-      } catch (error) {
-        console.error('Error al crear la preferencia:', error);
-      }
-    } else {
-      onPlaceOrder(paymentMethod);
-    }
+    onPlaceOrder(paymentMethod);
   };
 
 
@@ -112,11 +89,6 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           </RadioGroup>
         </div>
-        {showWallet && preferenceId && (
-          <div className="mt-5">
-            <Wallet initialization={{ preferenceId }} />
-          </div>
-        )}
         <button
           onClick={handlePlaceOrder}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
