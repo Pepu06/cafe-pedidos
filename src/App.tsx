@@ -6,6 +6,7 @@ import { MenuPage } from './pages/Menu';
 import { KitchenPage } from './pages/Kitchen';
 import { UtensilsCrossed } from 'lucide-react';
 import { useOrders } from './hooks/useOrders';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 function App() {
   const { orders, loading, createOrder, updateOrderStatus } = useOrders();
@@ -49,28 +50,47 @@ function App() {
   const handlePlaceOrder = async () => {
     if (currentOrder.length === 0) return;
 
+    toast.success('Pedido realizado!', {
+      position: 'top-right',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: 'colored',
+      transition: Bounce,
+    });
     const success = await createOrder(tableNumber, currentOrder);
     if (success) {
       setCurrentOrder([]);
-      setTableNumber((prev) => (prev % 20) + 1);
+      setTableNumber((prev) => prev);
     }
   };
 
   return (
     <BrowserRouter>
+      <ToastContainer />
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center py-4">
-              <Link to="/" className="flex items-center gap-2">
-                <UtensilsCrossed className="h-6 w-6 text-blue-600" />
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Sistema de Pedidos
-                </h1>
-              </Link>
-            </div>
-          </div>
-        </header>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <header className="bg-white shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex justify-center items-center py-5">
+                    <Link to="/" className="flex items-center gap-5">
+                      <UtensilsCrossed className="h-8 w-8 text-blue-600" />
+                      <h1 className="text-2xl font-semibold text-gray-900">
+                        Sistema de Pedidos
+                      </h1>
+                      <UtensilsCrossed className="h-8 w-8 text-blue-600" />
+                    </Link>
+                  </div>
+                </div>
+              </header>
+            }
+          />
+        </Routes>
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>

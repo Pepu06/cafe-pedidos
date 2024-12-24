@@ -25,9 +25,8 @@ export const OrderColumn: React.FC<OrderColumnProps> = ({
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`space-y-4 min-h-[200px] ${
-              snapshot.isDraggingOver ? 'bg-blue-50' : ''
-            }`}
+            className={`space-y-4 min-h-[200px] max-h-[600px] overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-50' : ''
+              }`}
           >
             {orders.map((order, index) => (
               <DraggableOrder

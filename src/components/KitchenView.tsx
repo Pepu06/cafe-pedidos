@@ -34,10 +34,17 @@ export const KitchenView: React.FC<KitchenViewProps> = ({
     } else if (destination.droppableId === 'pending') {
       onUpdateStatus(draggableId, 'pending');
     }
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
   };
 
   const handleComplete = (orderId: string) => {
     onUpdateStatus(orderId, 'completed');
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
   };
 
   if (loading) {
