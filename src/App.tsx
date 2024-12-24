@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { MenuItem, OrderItem } from './types';
 import { menuItems } from './data/menuItems';
 import { MenuPage } from './pages/Menu';
@@ -68,7 +68,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <BrowserRouter>
       <ToastContainer />
       <div className="min-h-screen bg-gray-50">
         <Routes>
@@ -122,7 +122,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
