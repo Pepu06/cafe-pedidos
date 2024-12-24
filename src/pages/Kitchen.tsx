@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KitchenView } from '../components/KitchenView';
 import { useAuth } from '../hooks/useAuth';
@@ -16,6 +16,14 @@ export const KitchenPage: React.FC<KitchenPageProps> = ({ orders, loading, onUpd
   const [error, setError] = useState('');
   const { isAuthenticated, login, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,10 +86,10 @@ export const KitchenPage: React.FC<KitchenPageProps> = ({ orders, loading, onUpd
           </div>
         </div>
       </header>
-      <KitchenView 
-        orders={orders} 
-        loading={loading} 
-        onUpdateStatus={onUpdateStatus} 
+      <KitchenView
+        orders={orders}
+        loading={loading}
+        onUpdateStatus={onUpdateStatus}
       />
     </div>
   );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { Order } from '../types';
-import { OrderCard } from './OrderCard';
 import { DraggableOrder } from './DraggableOrder';
 
 interface OrderColumnProps {
