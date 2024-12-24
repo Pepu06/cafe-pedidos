@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { OrderItem } from '../types';
 import { Minus, Plus, Trash2 } from 'lucide-react';
@@ -27,34 +27,29 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // Inicializar Mercado Pago SDK
-  useEffect(() => {
+  React.useEffect(() => {
     initMercadoPago('APP_USR-6c0546fc-95a1-46d9-9403-b110ce65de09', { locale: 'es-AR' }); // Reemplaza con tu clave pública
   }, []);
 
-  // Crear la preferencia de MercadoPago
-  const createPreference = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/api/create_preference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      });
-      const data = await response.json();
-      setPreferenceId(data.preferenceId);
-      setShowWallet(true);
-    } catch (error) {
-      console.error('Error al crear la preferencia:', error);
+  const handlePlaceOrder = async () => {
+    if (paymentMethod === 'mercadopago') {
+      try {
+        const response = await fetch('https://cafe-pedidos-back.onrender.com/api/create_preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items }),
+        });
+        const data = await response.json();
+        setPreferenceId(data.preferenceId);
+        setShowWallet(true);
+      } catch (error) {
+        console.error('Error al crear la preferencia:', error);
+      }
+    } else {
+      onPlaceOrder(paymentMethod);
     }
   };
 
-  // Actualiza el estado de la orden y realiza el pedido
-  const handlePlaceOrder = async () => {
-    if (paymentMethod === 'cash') {
-      onPlaceOrder(paymentMethod); // Si es efectivo, pasa el método de pago
-    } else {
-      await createPreference(); // Si es MercadoPago, crea la preferencia
-    }
-  };
 
   if (items.length === 0) {
     return (
