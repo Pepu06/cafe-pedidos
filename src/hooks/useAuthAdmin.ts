@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-export function useAuth() {
+export function useAuthAdmin() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('kitchen_auth') === 'true';
+    return sessionStorage.getItem('admin_auth') === 'true';
   });
 
   const login = (password: string) => {
-    if (password === 'cocina1234') {
-      sessionStorage.setItem('kitchen_auth', 'true');
+    if (password === 'admin1234') {
+      sessionStorage.setItem('admin_auth', 'true');
       setIsAuthenticated(true);
       return true;
     }
@@ -15,7 +15,7 @@ export function useAuth() {
   };
 
   const logout = () => {
-    sessionStorage.removeItem('kitchen_auth');
+    sessionStorage.removeItem('admin_auth');
     setIsAuthenticated(false);
   };
 

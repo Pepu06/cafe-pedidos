@@ -2,7 +2,8 @@ import React from 'react';
 import { MenuItem, OrderItem } from '../types';
 import { MenuSection } from '../components/MenuSection';
 import { OrderSummary } from '../components/OrderSummary';
-import { TableSelector } from '../components/TableSelector';
+import { useOrders } from '../hooks/useOrders';
+import { toast } from 'react-toastify';
 
 interface MenuPageProps {
   menuItems: {
@@ -17,6 +18,8 @@ interface MenuPageProps {
   onRemoveItem: (itemId: string) => void;
   onPlaceOrder: () => void;
   onTableChange: (table: number) => void;
+  onMethodPaymentChange: (paymentMethod: 'cash' | 'qr' | 'tarjeta') => void;
+  getStatusTable: (tableNumber: number) => Promise<string>;
 }
 
 export const MenuPage: React.FC<MenuPageProps> = ({
@@ -27,8 +30,37 @@ export const MenuPage: React.FC<MenuPageProps> = ({
   onUpdateQuantity,
   onRemoveItem,
   onPlaceOrder,
-  onTableChange,
+  onMethodPaymentChange,
+  getStatusTable,
 }) => {
+  const { modifyOrder } = useOrders();
+
+  const handleModifyOrder = async (items: OrderItem[]) => {
+    const success = await modifyOrder(tableNumber, items);
+    if (success) {
+      toast.success('Pedido modificado exitosamente!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: 'colored',
+      });
+      // Limpiar el pedido actual después de modificar exitosamente
+      currentOrder.forEach(item => {
+        if (item.id) {
+          onRemoveItem(item.id.toString());
+        }
+      });
+    } else {
+      toast.error('Error al modificar el pedido', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
+  };
+
   return (
     <div className="grid gap-8 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-8">
@@ -49,13 +81,15 @@ export const MenuPage: React.FC<MenuPageProps> = ({
         />
       </div>
       <div className="lg:sticky lg:top-8">
-        <TableSelector value={tableNumber} onChange={onTableChange} />
         <OrderSummary
           items={currentOrder}
           onUpdateQuantity={onUpdateQuantity}
           onRemoveItem={onRemoveItem}
           onPlaceOrder={onPlaceOrder}
           tableNumber={tableNumber}
+          onMethodPaymentChange={onMethodPaymentChange}
+          onModifyOrder={handleModifyOrder}
+          getStatusTable={getStatusTable}
         />
       </div>
     </div>

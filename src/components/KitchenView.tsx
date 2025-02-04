@@ -2,6 +2,7 @@ import React from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Order } from '../types';
 import { OrderColumn } from './OrderColumn';
+import { useOrders } from '../hooks/useOrders';
 
 interface KitchenViewProps {
   orders: Order[];
@@ -16,6 +17,7 @@ export const KitchenView: React.FC<KitchenViewProps> = ({
 }) => {
   const pendingOrders = orders.filter((order) => order.status === 'pending');
   const preparingOrders = orders.filter((order) => order.status === 'preparing');
+  const { agregarTilde } = useOrders();
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -42,9 +44,12 @@ export const KitchenView: React.FC<KitchenViewProps> = ({
 
   const handleComplete = (orderId: string) => {
     onUpdateStatus(orderId, 'completed');
+
+    agregarTilde(orderId);
+
     setTimeout(() => {
       window.location.reload();
-    }, 200);
+    }, 1000);
   };
 
   if (loading) {

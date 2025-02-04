@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-export function useAuth() {
+export function useAuthMozo() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('kitchen_auth') === 'true';
+    return sessionStorage.getItem('mozo_auth') === 'true';
   });
 
   const login = (password: string) => {
-    if (password === 'cocina1234') {
-      sessionStorage.setItem('kitchen_auth', 'true');
+    if (password === 'mozo1234') {
+      sessionStorage.setItem('mozo_auth', 'true');
       setIsAuthenticated(true);
       return true;
     }
@@ -15,7 +15,7 @@ export function useAuth() {
   };
 
   const logout = () => {
-    sessionStorage.removeItem('kitchen_auth');
+    sessionStorage.removeItem('mozo_auth');
     setIsAuthenticated(false);
   };
 

@@ -4,6 +4,7 @@ import { KitchenView } from '../components/KitchenView';
 import { useAuth } from '../hooks/useAuth';
 import { LogOut } from 'lucide-react';
 import { Order } from '../types';
+import { useOrders } from '../hooks/useOrders';
 
 interface KitchenPageProps {
   orders: Order[];
@@ -16,13 +17,60 @@ export const KitchenPage: React.FC<KitchenPageProps> = ({ orders, loading, onUpd
   const [error, setError] = useState('');
   const { isAuthenticated, login, logout } = useAuth();
   const navigate = useNavigate();
+  const { countOrders, listenToUpdates } = useOrders();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      window.location.reload();
-    }, 10000);
+    let initialCountedOrders = 0;
 
-    return () => clearInterval(interval);
+    const fetchInitialOrders = async () => {
+      initialCountedOrders = await countOrders();
+    };
+
+    fetchInitialOrders();
+
+    const intervalId = setInterval(async () => {
+      const countedOrders = await countOrders();
+
+      if (countedOrders > initialCountedOrders) {
+        alert('Nueva orden!');
+        window.location.reload();
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    let initialLastUpdate = null;
+
+    const fetchInitialUpdates = async () => {
+      const updates = await listenToUpdates(); // Llama a tu función listenToUpdates
+      if (updates.length > 0) {
+        // Encuentra la última fecha de actualización
+        initialLastUpdate = updates.reduce((latest, current) => {
+          return new Date(latest) > new Date(current) ? latest : current;
+        });
+      }
+    };
+
+    fetchInitialUpdates();
+
+    const intervalId = setInterval(async () => {
+      const updates = await listenToUpdates(); // Llama a listenToUpdates para obtener las fechas actualizadas
+      if (updates.length > 0) {
+        // Encuentra la última fecha de actualización
+        const latestUpdate = updates.reduce((latest, current) => {
+          return new Date(latest) > new Date(current) ? latest : current;
+        });
+        // Compara la última actualización con la inicial
+        if (latestUpdate && latestUpdate !== initialLastUpdate) {
+          alert('¡Nueva orden actualizada!');
+          window.location.reload();
+        }
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {

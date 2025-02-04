@@ -17,7 +17,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onComplete, isDragg
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold">Mesa {order.tableNumber}</h3>
         <p className="text-sm text-gray-500">
-          {new Date(order.timestamp).toLocaleTimeString()}
+          {new Date(order.timestamp).toLocaleString()}
         </p>
       </div>
       <ul className="space-y-2">
